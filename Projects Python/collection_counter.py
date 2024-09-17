@@ -5,7 +5,6 @@ def collection(x,final = []):
     global total
     total=0
     list2 = x.split()
-    #print(list2)
     for i in range (len(list2)):
         List1.append(int(list2[i]))
     final.append(List1[1])
