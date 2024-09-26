@@ -31,3 +31,4 @@ a=int(input("enter the number of shoe"))
 for i in range(a):
     shoelist.append(int(input()))
     
+    
