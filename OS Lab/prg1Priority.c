@@ -1,40 +1,38 @@
 #include<stdio.h>
 int main()
 {
-    int bt[20] , wt[20] , tat[20],i,n;
-    int p[20],temp,k,pri[20]; 
-    float wtavg,tatavg;
-    printf("\n Enter the number of process -- ");
+    int bt[20],wt[20],tat[20],pri[20],p[20],i,n,k,temp;
+    float tatavg,wtavg;
+
+    printf("Enter the number of Process:" );
     scanf("%d",&n);
 
-    for (i = 0 ; i < n ; i++)
+    for (int i = 0 ; i< n ; i++)
     {
         p[i] = i;
-        printf("Enter only +ve number\n");
-        printf("Enter the burst time and Priority of the process: ");
+        printf("Enter bt and Pri of p%d",i);
         scanf("%d%d",&bt[i],&pri[i]);
     }
-// change 
-    for (i = 0 ; i < n; i++)
+
+    for(i = 0 ; i< n ;i++)
+    for(k = i+1 ; k<n ;k++)
+    if (pri[i] > pri[k])
     {
-        for (k = i+1 ; k<n ; k++)
-        {
-            if (pri[i] > pri[k])
-            {
-                temp = p[i];
-                p[i] = p[k];
-                p[k] = temp;
+        temp = p[i];
+        p[i] = p[k];
+        p[k] = temp;
 
-                temp = bt[i];
-                bt[i] = bt[k];
-                bt[k] = temp;
+        temp = bt[i];
+        bt[i] = bt[k];
+        bt[k] = temp;
 
-                temp = pri[i];
-                pri[i] = pri[k];
-                pri[k] = temp;
-            }
-        }
+        temp = pri[i];
+        pri[i] = pri[k];
+        pri[k] = temp;
+
     }
+
+
     wtavg = wt[0] = 0;
     tatavg = tat[0] = bt[0];
 
