@@ -1,51 +1,54 @@
 #include<stdio.h>
 #define max 25
-void main()
+int main()
 {
-    int frag[max] , b[max] , f[max] , i ,j,nb,nf,temp,higest = 0;
+    int b[max] , f[max] , frag[max] , nb , nf , i , j , temp , higest = 0;
     static int bf[max] , ff[max];
 
-    printf("\n\n Memory Managnment Scherme - worst fit");
-    printf("Enter no of blocks: ");
+    printf("\nEnter the number of Blocks:");
     scanf("%d",&nb);
-    printf("Enter the number of files:"); 
-    scanf("%d",&nf);
-    printf("\nEnter the size of the blocks:-\n");
 
-    for(i=1;i<=nb;i++)
+    printf("\nEnter the number of files:");
+    scanf("%d",&nf);
+
+    printf("Enter size of blocks: ");
+    for (i = 1 ; i< nb ; i++)
     {
-        printf("Block %d:",i); 
+        printf("blocks %d: ",i);
         scanf("%d",&b[i]);
     }
 
-    printf("Enter the size of the files :-\n"); 
-    for(i=1;i<=nf;i++) 
-    { 
-        printf("File %d:",i); 
-        scanf("%d",&f[i]); 
-    }
-    for(i= 1 ; i<nf ; i++)
+    printf("Enter size of files: ");
+    for (i = 1 ; i< nb ; i++)
     {
-        for (j = 1 ; j<nb ; j++)
+        printf("files %d: ",i);
+        scanf("%d",&f[i]);
+    }
+
+    for (i = 1 ; i< nf ; i++)
+    {
+        for (j = 1 ; j< nb ; j++)
         {
             if (bf[i] != 1)
             {
-                temp = b[j] -f[i];
+                temp = b[j] - f[i];
                 if (temp>=0)
-                    if (higest < temp)
+                    if (higest<temp)
                     {
                         ff[i] = j;
                         higest = temp;
                     }
             }
+
         }
         frag[i] = higest;
         bf[ff[i]] = 1;
         higest = 0;
     }
-    printf("File NO: \t file Size: \t block no; \t block size: \t Fragements");
-    for (i =1 ; i<=nf ; i++)
+
+    printf("File no , file size , block no , block size , fragment");
+    for (i = 1 ; i<nf ; i++)
     {
-        printf("\n%d\t\t%d\t\t%d\t\t%d\t\t%d",i,f[i],ff[i],b[ff[i]],frag[i]);
+    printf("%d%d%d%d%d",i,f[i],ff[i],b[ff[i]],frag[i])
     }
 }
