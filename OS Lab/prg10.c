@@ -10,6 +10,7 @@ scanf("%d'",&n);
 printf("enter the position of head"); 
 scanf("%d",&h); 
 t[0]=0; 
+
 t[1]=h; 
 printf("enter the tracks"); 
 for(i=2;i<n+2;i++) 
