@@ -14,6 +14,7 @@ int main(){
         scanf("%d", &a); 
         f[a] = 1; 
     }*/ 
+   
 x: 
  fn=fn+1;     
  printf("Enter index starting block and length: "); 
