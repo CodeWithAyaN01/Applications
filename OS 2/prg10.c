@@ -4,12 +4,12 @@
 #include<stdio.h> 
 int main() 
 { 
-    int tracks[20], d[20], head , i, j, n, temp, k, atr[20], tot, p, sum=0; 
+    int tracks[20], d[20], head , i, j, n, temp, k, atr[20],p, sum=0; 
     printf("enter the no of tracks to be traveresed"); 
     scanf("%d'",&n); 
     printf("enter the position of head"); 
     scanf("%d",&head); 
-    
+
     tracks[0]=0; 
     tracks[1]=head; 
 
@@ -44,8 +44,8 @@ int main()
         j--; 
         p++; 
     }
-
     atr[p]=tracks[j]; 
+
     for(p=k+1;p<n+2;p++,k++) 
         atr[p]=tracks[k+1]; 
 
