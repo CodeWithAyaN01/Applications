@@ -1,47 +1,62 @@
 #include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#define max_file 10
-#define max_len 10
-char dir[max_len];
-char totalfile[max_file][max_len];
-int filecount = 0;
-void creatfile()
+int main()
 {
-    if (filecount <max_len)
+    int n,m[10], min = 1 , rs[10] , flag[10],count[10],frames,next = 1,pf = 0;
+    printf("\nEnter the string len: ");
+    scanf("%d",&n);
+    printf("\nEnter the Strig: ");
+    for (int i = 0 ; i< n ; i++)
     {
-        char filename[max_len];
-        printf("Enter file name");
-        scanf("%d",filename);
-        strcpy(totalfile[filecount] , filename);
-        filecount++;
-        printf("file created");
+        scanf("%d",&rs[i]);
+        flag[i] = 0;
     }
-    else
+    printf("Enter the number of frames");
+    scanf("%d",&frames);
+    for (int j = 0 ; j<frames ; j++)
     {
-        printf("directory is full");
+        m[j] = -1;
+        count[j] = 0;
     }
-    
-}
-void delFile()
-{
-    char filename[max_len];
-    printf("Enter the file you want to del: ");
-    scanf("%s",filename);
-    int found = 0;
-    for (int i = 0 ; i< filecount ; i++)
-    {   
-        found = 1;
-        if (strcmp(totalfile[i], filename))
+    printf("The page replace process is : ");
+    for (int i = 0 ; i<n ; i++)
+    {
+        for (int k = 0 ; k<frames ; k++)
         {
-            strcpy(totalfile[i],totalfile[filecount-1]);
-            filecount--;
-            break;
+            if(m[k] == rs[i])
+            {
+                flag[i] = 0;
+                count[i] = next;
+                next++;
+            }
         }
-
+        if (flag[i] == 0)
+        {
+            if (i<frames)
+            {
+                m[i] = rs[i];
+                count[i] = next;
+                next++;
+            }
+            else
+            {
+                min = 0;
+                for (int j = 1 ; j<frames ; j++)
+                    if(count[min] > count[j])
+                        min = j;
+                m[min] = rs[i];
+                count[min] = next;next++;
+            }
+            pf++;
+        }
+        for (int k = 0 ; k<frames ; k++)
+        {
+            printf("%d\t",m[k]);
+        }
+        if (flag[i] == 0)
+        {
+            printf("Pf is --%d",pf);
+        }
+        printf("\n");
     }
-    if (!found)
-    {
-        printf("file not here");
-    }
+    printf('The result is %d',pf);
 }

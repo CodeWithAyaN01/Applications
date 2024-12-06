@@ -4,45 +4,53 @@
 #include<stdio.h> 
 int main() 
 { 
-    int t[20], d[20], h, i, j, n, temp, k, atr[20], tot, p, sum=0; 
+    int tracks[20], d[20], head , i, j, n, temp, k, atr[20], tot, p, sum=0; 
     printf("enter the no of tracks to be traveresed"); 
     scanf("%d'",&n); 
     printf("enter the position of head"); 
-    scanf("%d",&h); 
-    t[0]=0; 
-    t[1]=h; 
+    scanf("%d",&head); 
+    
+    tracks[0]=0; 
+    tracks[1]=head; 
+
     printf("enter the tracks"); 
-    for(i=2;i<n+2;i++) 
-        scanf("%d",&t[i]); 
+    for(i=2 ; i<n+2 ; i++) 
+        scanf("%d",&tracks[i]); 
+
     for(i=0;i<n+2;i++) 
     { 
         for(j=0;j<(n+2)-i-1;j++) 
         { 
-            if(t[j]>t[j+1]) 
+            if(tracks[j]>tracks[j+1]) 
             { 
-                temp=t[j]; 
-                t[j]=t[j+1]; 
-                t[j+1]=temp; 
+                temp=tracks[j]; 
+                tracks[j]=tracks[j+1]; 
+                tracks[j+1]=temp; 
             } 
         } 
     } 
+
     for(i=0;i<n+2;i++) 
-        if(t[i]==h) 
+        if(tracks[i]==head) 
         { 
             j=i; 
             k=i; 
             p=0; 
         } 
-    while(t[j]!=0) 
+
+    while(tracks[j]!=0) 
     { 
-        atr[p]=t[j]; 
+        atr[p]=tracks[j]; 
         j--; 
         p++; 
-    } 
-    atr[p]=t[j]; 
+    }
+
+    atr[p]=tracks[j]; 
     for(p=k+1;p<n+2;p++,k++) 
-        atr[p]=t[k+1]; 
+        atr[p]=tracks[k+1]; 
+
     printf("seek sequence is:"); 
+
     for(j=0;j<n+1;j++) 
     { 
         if(atr[j]>atr[j+1]) 

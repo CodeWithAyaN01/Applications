@@ -28,6 +28,7 @@ void main()
                 break; 
         }
 
+
         if(k==frames) 
         { 
             m[count++]=rs[i]; 

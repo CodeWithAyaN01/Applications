@@ -37,7 +37,7 @@ void deleteFile()
     { 
         if (strcmp(filename, totalFiles[i]) == 0) 
         { 
-            found = 1; 
+            found = 1;
             printf("File %s is deleted.\n", filename); 
             strcpy(totalFiles[i], totalFiles[fileCount - 1]); 
             fileCount--; 
@@ -94,7 +94,7 @@ int main()
                 } 
                 if (!found) 
                 { 
-                    printf("File %s not found.\n", Search); 
+                    printf("File %s not found.\n", Search);
                 } 
                 break; 
             case 4: 

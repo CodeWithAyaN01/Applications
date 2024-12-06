@@ -3,8 +3,8 @@
 #include<stdio.h> 
 int main() 
 { 
-    int i, j , k, min, rs[25], m[10], count[10], flag[25], n, frames, pf=0, next=1; 
-    
+    int min, rs[25], m[10], count[10], flag[25], n, frames, pf=0, next=1; 
+    int i, j , k;
     printf("Enter the length of reference string -- "); 
     scanf("%d",&n); 
 
@@ -56,7 +56,7 @@ int main()
                 count[min]=next; 
                 next++; 
             } 
-            pf++; 
+            pf++;  
         } 
         
         for(j=0;j<frames;j++) 
