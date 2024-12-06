@@ -1,19 +1,19 @@
 #include <stdio.h> 
 #include <stdlib.h> 
 #include <string.h> 
-#define MAX_FILES 10 
-#define MAX_FILENAME_LENGTH 10 
-char directoryName[MAX_FILENAME_LENGTH]; 
-char filenames[MAX_FILES][MAX_FILENAME_LENGTH]; 
+#define Max_File 10 
+#define Name_length 10 
+char directoryName[Name_length]; 
+char totalFiles[Max_File][Name_length]; 
 int fileCount = 0; 
 void createFile() 
 { 
-    if (fileCount < MAX_FILES) 
+    if (fileCount < Max_File) 
     { 
-        char filename[MAX_FILENAME_LENGTH]; 
+        char filename[Name_length]; 
         printf("Enter the name of the file: "); 
         scanf("%s", filename); 
-        strcpy(filenames[fileCount], filename); 
+        strcpy(totalFiles[fileCount], filename); 
         fileCount++; 
         printf("File %s created.\n", filename); 
     } else 
@@ -21,6 +21,7 @@ void createFile()
         printf("Directory is full, cannot create more files.\n"); 
     } 
 } 
+
 void deleteFile() 
 { 
     if (fileCount == 0) 
@@ -28,17 +29,17 @@ void deleteFile()
         printf("Directory is empty, nothing to delete.\n"); 
         return; 
     } 
-    char filename[MAX_FILENAME_LENGTH]; 
+    char filename[Name_length]; 
     printf("Enter the name of the file to delete: "); 
     scanf("%s", filename); 
     int found = 0; 
     for (int i = 0; i < fileCount; i++) 
     { 
-        if (strcmp(filename, filenames[i]) == 0) 
+        if (strcmp(filename, totalFiles[i]) == 0) 
         { 
             found = 1; 
             printf("File %s is deleted.\n", filename); 
-            strcpy(filenames[i], filenames[fileCount - 1]); 
+            strcpy(totalFiles[i], totalFiles[fileCount - 1]); 
             fileCount--; 
             break; 
         } 
@@ -56,7 +57,7 @@ void displayFiles()
         printf("Files in the directory %s:\n", directoryName); 
         for (int i = 0; i < fileCount; i++) 
         { 
-            printf("\t%s\n", filenames[i]); 
+            printf("\t%s\n", totalFiles[i]); 
         } 
     } 
 } 
@@ -79,21 +80,21 @@ int main()
                 break; 
             case 3: 
                 printf("Enter the name of the file: "); 
-                char searchFilename[MAX_FILENAME_LENGTH]; 
-                scanf("%s", searchFilename); 
+                char Search[Name_length]; 
+                scanf("%s", Search); 
                 int found = 0; 
                 for (int i = 0; i < fileCount; i++) 
                 { 
-                    if (strcmp(searchFilename, filenames[i]) == 0) 
+                    if (strcmp(Search, totalFiles[i]) == 0) 
                     { 
-                    found = 1; 
-                    printf("File %s is found.\n", searchFilename); 
-                    break; 
+                        found = 1; 
+                        printf("File %s is found.\n", Search); 
+                        break; 
                     } 
                 } 
                 if (!found) 
                 { 
-                    printf("File %s not found.\n", searchFilename); 
+                    printf("File %s not found.\n", Search); 
                 } 
                 break; 
             case 4: 

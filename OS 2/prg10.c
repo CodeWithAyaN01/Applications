@@ -46,9 +46,9 @@ int main()
     for(j=0;j<n+1;j++) 
     { 
         if(atr[j]>atr[j+1]) 
-        d[j]=atr[j]-atr[j+1]; 
+            d[j]=atr[j]-atr[j+1]; 
         else 
-        d[j]=atr[j+1]-atr[j]; 
+            d[j]=atr[j+1]-atr[j]; 
         sum+=d[j]; 
         printf("\n%d", atr[j]); 
     } 
