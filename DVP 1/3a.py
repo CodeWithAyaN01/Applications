@@ -8,5 +8,3 @@ for ch in sectance:
         uppercase += 1
     elif 'a' <= ch <= 'z':
         lowercase += 1
-        
-    

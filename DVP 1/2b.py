@@ -4,7 +4,7 @@ def bin2dec(val):
     i = 0
     for dig in rev:
         dec += int(dig) * 2**i
-        i+=1
+        i+=1 #dont miss that
     return dec
 def oct2hex(val):
     rev = val[::-1]
@@ -12,15 +12,15 @@ def oct2hex(val):
     i = 0
     for dig in rev:
         dec += int(dig) * 8**i
-        i+=1
+        i+=1 #dont miss that
     list = []
     while dec!= 0:
         list.append(dec%16)
-        dec = dec// 16
+        dec = dec // 16
         
     newlist = []
     for elem in list[::-1]:
-        if elem <= 9:
+        if elem <= 9: # ye wala dekh lena 
             newlist.append(str(elem))
         else:
             newlist.append(chr(ord('A') + (elem - 10)))
