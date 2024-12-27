@@ -1,11 +1,4 @@
-from bokeh.io import output_file as of ,show
-from bokeh.layouts import row
-from bokeh.plotting import figure
-of("hello.html")
-fig1 = figure(width = 400 , height = 400 , title = "plot 1")
-fig1.line([1,2,3,4,5,6],[1,2,3,4,5,6],line_width = 4)
-x = y = list(range(10))
-
-fig2 = figure(width = 400 , height = 400 , title = "plot 2")
-fig2.circle(x,y,size = 5)
-show(row(fig1,fig2))
+import plotly.express as px
+df = px.data.iris()
+fig = px.scatter_3d(df,x = "sepal_width" , y = "sepal_length" , z = "petal_width",size = "petal_length",color = "species" , size_max =20 , opacity =1 )
+fig.show()
