@@ -1,4 +1,5 @@
-from bokeh.plotting import figure, output_file, show
+from bokeh.plotting import figure, output_file as OF, show
+OF("8aoutput.html")
 graph = figure(title="Bokeh Line Graph")
 x = [1, 2, 3, 4, 5]
 y = [5, 4, 3, 2, 1]
