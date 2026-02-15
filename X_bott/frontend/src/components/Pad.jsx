@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
-import axios from 'axios'
+import { useState } from 'react'
 import Card from './card'
+import { GoogleGenAI } from "@google/genai"
 
 const Pad = () => {
+    const ai = new GoogleGenAI({
+        apiKey: import.meta.env.VITE_GEMINI_API_KEY
+    })
     const [text, settext] = useState(``)
     // current loading state
     const [loading, setloading] = useState(false) 
@@ -13,27 +16,11 @@ const Pad = () => {
 
     setloading(true)
     try{
-        // API For GOOGLE
-       const API_KEY = import.meta.env.VITE_API_KEY
-       const URL = import.meta.env.VITE_URL
-      
-
-        const response = await axios.post(
-            import.meta.env.VITE_URL2, // Endpoint
-        {
-            url: text,
-        },
-        {
-            headers: 
-            {
-                "Content-Type": "application/json",
-                "apy-token": import.meta.env.VITE_KEY_APY
-            }
-        },
-    )
-        // taking the output
-        // const output = response.data.candidates[0].content.parts[0].text
-        setresult(response.data.data.summary)
+        const response = await ai.models.generateContent({
+            model: "gemini-3-flash-preview",
+            contents:`Summarise the following text -> ${text}`
+        })
+        setresult(response.text)
     }
     catch(error) {
         console.error("API Error:", error.response ? error.response.data : error.message);
@@ -73,3 +60,5 @@ const Pad = () => {
 }
 
 export default Pad
+
+// https://apyhub.com/dashboard
