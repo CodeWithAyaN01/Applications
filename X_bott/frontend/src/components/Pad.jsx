@@ -18,7 +18,7 @@ const Pad = () => {
     setloading(true)
     try{
         const response = await ai.models.generateContent({
-            model: "gemini-3-flash-preview",
+            model: "gemini-1.5-flash-preview",
             contents:`Summarise the following text -> ${text}`
         })
         const cleanText = response.text.replace(/\*\*/g, "")
