@@ -1,0 +1,15 @@
+# This volume code will work in 18+ versions
+services:
+  postgres:
+    image: postgres:18.1
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: book_store
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - my_database:/var/lib/postgresql
+
+volumes:
+  my_database:
