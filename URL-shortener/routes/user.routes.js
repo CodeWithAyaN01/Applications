@@ -3,11 +3,23 @@ import db from '../db/connection.js'
 import {userTable} from '../models/index.js'
 import { eq } from 'drizzle-orm'
 import { createHmac, randomBytes } from 'crypto'
-const router = express.Router();
+import { signupPostReqBodySchema } from '../validation/request.validation.js'
 
-router.post('./signup', async (req, res) => {
-    // payload from front-end
-    const {firstName, lastName, email, password} = req.body;
+
+const router = express.Router();
+router.post('/signup', async (req, res) => {
+    
+    // ZOD validation 
+    const validationResult = await signupPostReqBodySchema.safeParseAsync(req.body);
+
+    // checking for error using zod
+    if(validationResult.error) {
+        return res
+            .status(400)
+            .json({error: validationResult.error })
+    }
+    // getting Valid imputs
+    const {firstName, lastName, email, password} = validationResult.data // use .data to get validated results
 
     const [existingUser] = await db
         .select({
@@ -27,7 +39,7 @@ router.post('./signup', async (req, res) => {
     const hashedPassword = createHmac('sha256', salt).update(password).digest('hex')
 
     // if not adding a new user
-    const user = await db.insert(userTable).values({
+    const [user] = await db.insert(userTable).values({
         // What do we want to store (payload)
         email,
         firstName,
@@ -43,3 +55,4 @@ router.post('./signup', async (req, res) => {
             userId: user.id
         })
 })
+export default router
