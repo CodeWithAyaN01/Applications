@@ -8,8 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch index.js",
     "start": "node index.js",
-    "dbPush": "npx drizzle-kit push",
-    "dbStudio": "npx drizzle-kit studio",
+    "push": "npx drizzle-kit push",
+    "studio": "npx drizzle-kit studio",
     "dockerUp": "docker compose up -d",
     "dockerDown": "docker compose down"
   },
@@ -24,6 +24,7 @@
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "pg": "^8.18.0",
     "zod": "^4.3.6"
   },
