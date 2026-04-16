@@ -34,5 +34,5 @@ app.use("/files", express.static(SHARED_FOLDER));
 
 // Listen on ALL network interfaces
 app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running at http://localhost:${PORT} WIFI-> http://192.168.1.6:6969/`);
+    console.log(`Server running at http://localhost:${PORT} WIFI-> http://192.168.x.x:6969/`);
 });
