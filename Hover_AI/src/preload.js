@@ -1,10 +1,15 @@
-import { contextBridge } from "electron";
+// this is Electron Problem the we need to use CommonJS style to work 
+const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld(
     "electronAPI",
     {
-        test: () => {
-            console.log("Secure preload bridge working");
+        onMovePointer: (callback) => {
+
+            ipcRenderer.on(
+                "move-pointer",
+                (_, data) => callback(data)
+            );
         }
     }
 );

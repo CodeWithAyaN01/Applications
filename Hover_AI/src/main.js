@@ -48,6 +48,7 @@ function createOverlayWindow() {
 
     const { width, height } = primaryDisplay.bounds;
 
+
     overlayWindow = new BrowserWindow({
 
         width,
@@ -75,6 +76,8 @@ function createOverlayWindow() {
         hasShadow: false,
 
         webPreferences: {
+            
+            preload: path.join(__dirname, "preload.js"), // connet the preload IPC Communication
 
             contextIsolation: true,
 
@@ -91,6 +94,7 @@ function createOverlayWindow() {
             "overlay.html"
         )
     );
+    // overlayWindow.webContents.openDevTools(); //This is to see the coordinates
 }
 
 app.whenReady().then(() => {
@@ -98,4 +102,27 @@ app.whenReady().then(() => {
     createMainWindow();
 
     createOverlayWindow();
+
+    overlayWindow.webContents.once("did-finish-load", () => {
+
+        // coordinates generation Random send to overlay.js
+        setInterval(() => {
+
+            // Now main.js creates coordinates
+            const randomX = Math.random() * 1200;
+
+            const randomY = Math.random() * 700;
+
+            overlayWindow.webContents.send(
+                "move-pointer",
+                {
+                    x: randomX,
+                    y: randomY
+                }
+            );
+
+        }, 1000);
+
+    });
+
 });
