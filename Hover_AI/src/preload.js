@@ -10,6 +10,11 @@ contextBridge.exposeInMainWorld(
                 "move-pointer",
                 (_, data) => callback(data)
             );
+        },
+        
+        captureScreen: () => { // this invoked to the main.js
+            return ipcRenderer.invoke("capture-screen")
         }
     }
 );
+

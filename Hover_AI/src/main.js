@@ -1,7 +1,8 @@
-import { app, BrowserWindow, screen } from "electron";
-
-import path from "path";
-import { fileURLToPath } from "url";
+import { app, BrowserWindow, ipcMain, screen } from "electron"
+import { desktopCapturer } from "electron"
+import path from "path"
+import { fileURLToPath } from "url"
+import "dotenv/config"
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -38,6 +39,12 @@ function createMainWindow() {
             "index.html"
         )
     );
+
+    mainWindow.on("closed", () => {
+        if (overlayWindow && !overlayWindow.isDestroyed()) {
+            overlayWindow.close();
+        }
+    });
 
     mainWindow.webContents.openDevTools();
 }
@@ -97,6 +104,26 @@ function createOverlayWindow() {
     // overlayWindow.webContents.openDevTools(); //This is to see the coordinates
 }
 
+ipcMain.handle("capture-screen", async () => {
+    // capture scrren section
+    const primaryDisplay = screen.getPrimaryDisplay()
+    const { width, height } = primaryDisplay.size
+
+    const sources = await desktopCapturer.getSources({
+        types: ["screen"],
+        thumbnailSize: {
+            width,
+            height
+        }
+    })
+    const screenshot = sources[0].thumbnail;
+
+    // const buffer = screenshot.toPNG()
+    // const base64 = buffer.toString("base64")
+
+    return screenshot.toDataURL()
+})
+
 app.whenReady().then(() => {
 
     createMainWindow();
@@ -104,14 +131,16 @@ app.whenReady().then(() => {
     createOverlayWindow();
 
     overlayWindow.webContents.once("did-finish-load", () => {
+        const primaryDisplay = screen.getPrimaryDisplay();
+        const { width, height } = primaryDisplay.bounds;
 
         // coordinates generation Random send to overlay.js
         setInterval(() => {
 
             // Now main.js creates coordinates
-            const randomX = Math.random() * 1200;
+            const randomX = Math.random() * width;
 
-            const randomY = Math.random() * 700;
+            const randomY = Math.random() * height;
 
             overlayWindow.webContents.send(
                 "move-pointer",
@@ -125,4 +154,10 @@ app.whenReady().then(() => {
 
     });
 
+});
+
+app.on("window-all-closed", () => {
+    if (process.platform !== "darwin") {
+        app.quit();
+    }
 });

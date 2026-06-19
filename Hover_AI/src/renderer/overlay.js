@@ -9,17 +9,6 @@ function movePointer(x, y) {
 
     pointer.style.top = `${y}px`;
 }
-// Ramdom movements changes with controlled mon
-// setInterval(() => {
-
-//     const randomX = Math.random() * window.innerWidth;
-
-//     const randomY = Math.random() * window.innerHeight;
-
-//     movePointer(randomX, randomY);
-
-// }, 2000);
-
 
 // listning the movements from the main.js insted of the this function
 window.electronAPI.onMovePointer((data) => {
