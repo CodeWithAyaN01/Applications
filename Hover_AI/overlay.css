@@ -57,33 +57,7 @@ body {
     }
 }
 
-#tooltip{
 
-    position:absolute;
-
-    padding:12px;
-
-    max-width:300px;
-
-    background:rgba(0,0,0,0.8);
-
-    color:white;
-
-    border-radius:8px;
-
-    font-size:16px;
-
-    left:0;
-
-    top:0;
-
-    transition:
-    left 0.3s ease,
-    top 0.3s ease;
-
-    pointer-events: none;
-
-}
 
 
 

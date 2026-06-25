@@ -3,6 +3,7 @@ import { desktopCapturer } from "electron"
 import path from "path"
 import { fileURLToPath } from "url"
 import "dotenv/config"
+import { analyzeScreen } from "./renderer/ai.js"
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -103,8 +104,30 @@ function createOverlayWindow() {
     );
     // overlayWindow.webContents.openDevTools(); //This is to see the coordinates
 }
+// ALL IPC HANDLEARS
+
+// here the captureScreen converted to 
+// ipcMain.handle("capture-screen", async () => {
+
+//     // capture scrren section
+//     const primaryDisplay = screen.getPrimaryDisplay()
+//     const { width, height } = primaryDisplay.size
+
+//     const sources = await desktopCapturer.getSources({
+//         types: ["screen"],
+//         thumbnailSize: {
+//             width,
+//             height
+//         }
+//     })
+//     const screenshot = sources[0].thumbnail;
+//     const buffer = screenshot.toPNG()
+//     const base64 = buffer.toString("base64")
+//     return base64
+// })
 
 ipcMain.handle("capture-screen", async () => {
+
     // capture scrren section
     const primaryDisplay = screen.getPrimaryDisplay()
     const { width, height } = primaryDisplay.size
@@ -118,39 +141,107 @@ ipcMain.handle("capture-screen", async () => {
     })
     const screenshot = sources[0].thumbnail;
 
-    // const buffer = screenshot.toPNG()
-    // const base64 = buffer.toString("base64")
+    // Maintain aspect ratio
+    const targetHeight = 720;
+    const aspect =
+        screenshot.getSize().width / screenshot.getSize().height;
+    
+    const targetWidth =
+        Math.round(
+            targetHeight * aspect
+        );
 
-    return screenshot.toDataURL()
+    // Resize
+    const resized =
+        screenshot.resize({
+
+            width: targetWidth,
+            height: targetHeight
+        });
+
+    // JPEG Q90
+    const buffer = resized.toJPEG(90);
+    console.log(
+        "JPEG Size :",
+        (buffer.length / 1024).toFixed(2),
+        "KB"
+    );
+    const base64 = buffer.toString("base64");
+    return base64;
 })
 
-app.whenReady().then(() => {
+
+// get the base64 image and the prompt and call analyzeScreen() and return gemini response
+ipcMain.handle("analyze-screen",
+
+    async (_, image, prompt) => {
+        const result = await analyzeScreen(image, prompt) // calling the gemini
+        return result
+    }
+)
+ipcMain.handle("move-pointer",
+    (_, x, y) => {
+        overlayWindow.webContents.send("move-pointer", 
+            {
+                x,
+                y
+            }
+        )
+    }
+)
+ipcMain.handle("screen-size",
+
+    () => {
+        const { width, height } =
+            screen.getPrimaryDisplay().bounds;
+        return {
+            width,
+            height
+        };
+    }
+);
+ipcMain.handle("show-explanation",
+    (_,x,y,text)=>{
+        overlayWindow.webContents.send(
+            "show-explanation",
+            {
+                x,
+                y,
+                text
+            }
+            );
+        }
+    );
+
+
+app.whenReady().then(async () => {
 
     createMainWindow();
 
     createOverlayWindow();
 
     overlayWindow.webContents.once("did-finish-load", () => {
+
         const primaryDisplay = screen.getPrimaryDisplay();
         const { width, height } = primaryDisplay.bounds;
 
         // coordinates generation Random send to overlay.js
-        setInterval(() => {
+        // setInterval(() => {
 
-            // Now main.js creates coordinates
-            const randomX = Math.random() * width;
+        //     // Now main.js creates coordinates
+        //     const randomX = Math.random() * width;
 
-            const randomY = Math.random() * height;
+        //     const randomY = Math.random() * height;
 
-            overlayWindow.webContents.send(
-                "move-pointer",
-                {
-                    x: randomX,
-                    y: randomY
-                }
-            );
+        //     overlayWindow.webContents.send(
+        //         "move-pointer",
+        //         {
+        //             x: randomX,
+        //             y: randomY
+        //         }
+        //     );
 
-        }, 1000);
+        // }, 1000);
 
     });
 
