@@ -4,6 +4,9 @@ import path from "path"
 import { fileURLToPath } from "url"
 import "dotenv/config"
 import { analyzeScreen } from "./renderer/ai.js"
+import { extractText, initializeOCR } from "./renderer/ocr.js";
+import { findWord, findPhrase, findAllWords } from "./renderer/ocrSearch.js";
+
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -105,41 +108,40 @@ function createOverlayWindow() {
     // overlayWindow.webContents.openDevTools(); //This is to see the coordinates
 }
 // ALL IPC HANDLEARS
-
-// here the captureScreen converted to 
-// ipcMain.handle("capture-screen", async () => {
-
-//     // capture scrren section
-//     const primaryDisplay = screen.getPrimaryDisplay()
-//     const { width, height } = primaryDisplay.size
-
-//     const sources = await desktopCapturer.getSources({
-//         types: ["screen"],
-//         thumbnailSize: {
-//             width,
-//             height
-//         }
-//     })
-//     const screenshot = sources[0].thumbnail;
-//     const buffer = screenshot.toPNG()
-//     const base64 = buffer.toString("base64")
-//     return base64
-// })
-
 ipcMain.handle("capture-screen", async () => {
 
     // capture scrren section
     const primaryDisplay = screen.getPrimaryDisplay()
+    const scaleFactor = primaryDisplay.scaleFactor;
     const { width, height } = primaryDisplay.size
 
     const sources = await desktopCapturer.getSources({
-        types: ["screen"],
-        thumbnailSize: {
-            width,
-            height
-        }
-    })
+    types: ["screen"],
+    thumbnailSize: {
+        width: Math.round(width * scaleFactor),
+        height: Math.round(height * scaleFactor)
+    }
+    });
+
+    // Native image
     const screenshot = sources[0].thumbnail;
+
+    // OCR buffer in PNG Native format
+    
+    const enlarged = screenshot.resize({
+        width: screenshot.getSize().width * 2,
+        height: screenshot.getSize().height * 2
+    });
+
+    const ocrBuffer = enlarged.toPNG();
+
+    // OCR calling 
+    
+    const words = await extractText(ocrBuffer)
+
+    // Print every detected word
+    console.log("Detected Words:");
+    console.log(words.map(word => word.text));
 
     // Maintain aspect ratio
     const targetHeight = 720;
@@ -167,18 +169,23 @@ ipcMain.handle("capture-screen", async () => {
         "KB"
     );
     const base64 = buffer.toString("base64");
-    return base64;
+    
+    return {
+        image: base64,
+        words
+    };
 })
 
 
 // get the base64 image and the prompt and call analyzeScreen() and return gemini response
 ipcMain.handle("analyze-screen",
 
-    async (_, image, prompt) => {
-        const result = await analyzeScreen(image, prompt) // calling the gemini
+    async (_, image, prompt, words) => {
+        const result = await analyzeScreen(image, prompt, words) // calling the gemini
         return result
     }
 )
+
 ipcMain.handle("move-pointer",
     (_, x, y) => {
         overlayWindow.webContents.send("move-pointer", 
@@ -219,29 +226,14 @@ app.whenReady().then(async () => {
     createMainWindow();
 
     createOverlayWindow();
+    
+    // creats worker for the OCR to read and process multiple Images taking less process times
+    await initializeOCR();
 
     overlayWindow.webContents.once("did-finish-load", () => {
 
         const primaryDisplay = screen.getPrimaryDisplay();
         const { width, height } = primaryDisplay.bounds;
-
-        // coordinates generation Random send to overlay.js
-        // setInterval(() => {
-
-        //     // Now main.js creates coordinates
-        //     const randomX = Math.random() * width;
-
-        //     const randomY = Math.random() * height;
-
-        //     overlayWindow.webContents.send(
-        //         "move-pointer",
-        //         {
-        //             x: randomX,
-        //             y: randomY
-        //         }
-        //     );
-
-        // }, 1000);
 
     });
 

@@ -7,7 +7,11 @@ const ai = new GoogleGenAI({
 })
 
 // ScreenImage to Base64URL analyzeing the image
-export async function analyzeScreen(imageBase64, prompt) {
+export async function analyzeScreen(imageBase64, prompt, words) {
+
+    const ocrContext = words.map(word =>
+    `${word.text} (${word.x}, ${word.y}, ${word.width}, ${word.height})`).join("\n");
+
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: [
@@ -15,7 +19,7 @@ export async function analyzeScreen(imageBase64, prompt) {
                 role: "user",
                 parts: [
                     {
-                        text: prompt
+                        text: `${prompt} OCR Data:${ocrContext}`
                     },
                     {
                         inlineData: {

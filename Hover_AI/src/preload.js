@@ -16,8 +16,8 @@ contextBridge.exposeInMainWorld(
             return ipcRenderer.invoke("capture-screen")
         },
 
-        analyzeImage: (image, prompt) => {
-            return ipcRenderer.invoke("analyze-screen", image , prompt)
+        analyzeImage: (image, prompt, words) => {
+            return ipcRenderer.invoke("analyze-screen", image , prompt, words)
         },
 
         movePointer: (x, y) => {
