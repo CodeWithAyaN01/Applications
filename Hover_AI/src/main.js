@@ -3,9 +3,11 @@ import { desktopCapturer } from "electron"
 import path from "path"
 import { fileURLToPath } from "url"
 import "dotenv/config"
-import { analyzeScreen } from "./renderer/ai.js"
 import { extractText, initializeOCR } from "./renderer/ocr.js";
-import { findWord, findPhrase, findAllWords } from "./renderer/ocrSearch.js";
+import { startGuidance } from "./guidance/guidanceController.js";
+import { captureCurrentScreen } from "./services/captureService.js"
+import { analyzeScreen } from "./renderer/ai.js"
+// import { findWord, findPhrase, findAllWords } from "./renderer/ocrSearch.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -80,7 +82,7 @@ function createOverlayWindow() {
 
         resizable: false,
 
-        focusable: false,
+        focusable: true,
 
         skipTaskbar: true,
 
@@ -96,7 +98,9 @@ function createOverlayWindow() {
         }
     });
 
-    overlayWindow.setIgnoreMouseEvents(true);
+    overlayWindow.setIgnoreMouseEvents(true, {
+        forward: true
+    });
 
     overlayWindow.loadFile(
         path.join(
@@ -111,69 +115,71 @@ function createOverlayWindow() {
 ipcMain.handle("capture-screen", async () => {
 
     // capture scrren section
-    const primaryDisplay = screen.getPrimaryDisplay()
-    const scaleFactor = primaryDisplay.scaleFactor;
-    const { width, height } = primaryDisplay.size
+    // const primaryDisplay = screen.getPrimaryDisplay()
+    // const scaleFactor = primaryDisplay.scaleFactor;
+    // const { width, height } = primaryDisplay.size
 
-    const sources = await desktopCapturer.getSources({
-    types: ["screen"],
-    thumbnailSize: {
-        width: Math.round(width * scaleFactor),
-        height: Math.round(height * scaleFactor)
-    }
-    });
+    // const sources = await desktopCapturer.getSources({
+    // types: ["screen"],
+    // thumbnailSize: {
+    //     width: Math.round(width * scaleFactor),
+    //     height: Math.round(height * scaleFactor)
+    // }
+    // });
 
-    // Native image
-    const screenshot = sources[0].thumbnail;
+    // // Native image
+    // const screenshot = sources[0].thumbnail;
 
-    // OCR buffer in PNG Native format
+    // // OCR buffer in PNG Native format
     
-    const enlarged = screenshot.resize({
-        width: screenshot.getSize().width * 2,
-        height: screenshot.getSize().height * 2
-    });
+    // const enlarged = screenshot.resize({
+    //     width: screenshot.getSize().width * 2,
+    //     height: screenshot.getSize().height * 2
+    // });
 
-    const ocrBuffer = enlarged.toPNG();
+    // const ocrBuffer = enlarged.toPNG();
 
-    // OCR calling 
+    // // OCR calling 
     
-    const words = await extractText(ocrBuffer)
+    // const words = await extractText(ocrBuffer)
 
-    // Print every detected word
-    console.log("Detected Words:");
-    console.log(words.map(word => word.text));
+    // // Print every detected word
+    // console.log("Detected Words:");
+    // console.log(words.map(word => word.text));
 
-    // Maintain aspect ratio
-    const targetHeight = 720;
-    const aspect =
-        screenshot.getSize().width / screenshot.getSize().height;
+    // // Maintain aspect ratio
+    // const targetHeight = 720;
+    // const aspect =
+    //     screenshot.getSize().width / screenshot.getSize().height;
     
-    const targetWidth =
-        Math.round(
-            targetHeight * aspect
-        );
+    // const targetWidth =
+    //     Math.round(
+    //         targetHeight * aspect
+    //     );
 
-    // Resize
-    const resized =
-        screenshot.resize({
+    // // Resize
+    // const resized =
+    //     screenshot.resize({
 
-            width: targetWidth,
-            height: targetHeight
-        });
+    //         width: targetWidth,
+    //         height: targetHeight
+    //     });
 
-    // JPEG Q90
-    const buffer = resized.toJPEG(90);
-    console.log(
-        "JPEG Size :",
-        (buffer.length / 1024).toFixed(2),
-        "KB"
-    );
-    const base64 = buffer.toString("base64");
+    // // JPEG Q90
+    // const buffer = resized.toJPEG(90);
+    // console.log(
+    //     "JPEG Size :",
+    //     (buffer.length / 1024).toFixed(2),
+    //     "KB"
+    // );
+    // const base64 = buffer.toString("base64");
     
-    return {
-        image: base64,
-        words
-    };
+    // return {
+    //     image: base64,
+    //     words
+    // };
+
+    return await captureCurrentScreen();
 })
 
 
@@ -221,6 +227,41 @@ ipcMain.handle("show-explanation",
     );
 
 
+ipcMain.handle("set-overlay-mouse-events", (_, ignore) => {
+
+    overlayWindow.setIgnoreMouseEvents(ignore, {
+        forward: true
+    });
+
+});
+
+ipcMain.handle("overlay:start-guidance", async (_, goal) => {
+
+    const result = await startGuidance(goal);
+
+    if (!result) {
+        return;
+    }
+
+    const data = JSON.parse(result);
+
+    const { width, height } = screen.getPrimaryDisplay().bounds;
+
+    const x = Math.round(width * (data.targetPercentX / 100));
+    const y = Math.round(height * (data.targetPercentY / 100));
+
+    overlayWindow.webContents.send("move-pointer", {
+        x,
+        y
+    });
+
+    overlayWindow.webContents.send("show-explanation", {
+        x,
+        y,
+        text: data.explanation
+    });
+
+});
 app.whenReady().then(async () => {
 
     createMainWindow();

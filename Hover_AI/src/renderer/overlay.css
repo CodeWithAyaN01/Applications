@@ -1,89 +1,281 @@
-body {
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
 
-    margin: 0;
+/* ===========================
+   Design tokens — white glass
+=========================== */
+:root {
+    --glass: rgba(255, 255, 255, 0.55);
+    --glass-strong: rgba(255, 255, 255, 0.86);
+    --hairline: rgba(255, 255, 255, 0.7);
+    --hairline-dark: rgba(20, 20, 25, 0.08);
 
-    overflow: hidden;
+    --charcoal: #17171b;
+    --charcoal-soft: #2a2a30;
 
-    background: transparent;
+    --grad-blue: #4f7cff;
+    --grad-violet: #a855f7;
+    --grad-pink: #ec4899;
+    --grad-orange: #fb923c;
+
+    --ink: #17171b;
+    --ink-muted: rgba(23, 23, 27, 0.55);
+    --ink-faint: rgba(23, 23, 27, 0.28);
+
+    --font-display: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+    --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
 }
 
+body {
+    margin: 0;
+    overflow: hidden;
+    background: transparent;
+    pointer-events: none;
+    font-family: var(--font-body);
+}
+
+/* ===========================
+   Reticle (pointer) — gradient cursor
+=========================== */
+
 #pointer {
-
     position: absolute;
-
-    width: 20px;
-
-    height: 20px;
-
-    border-radius: 50%;
-
-    background: rgba(255, 255, 255, 0.25);
-
-    border: 1px solid rgba(255, 255, 255, 0.5);
-
-    box-shadow:
-        0 0 10px rgba(255, 255, 255, 0.4),
-        0 0 20px rgba(255, 255, 255, 0.25),
-        0 0 40px rgba(255, 255, 255, 0.15);
-
-    backdrop-filter: blur(2px);
-
+    width: 34px;
+    height: 34px;
     left: 300px;
-
     top: 300px;
 
     transition:
-        left 0.3s ease,
-        top 0.3s ease;
+        left 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        top 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 
-    animation: pulse 1.5s infinite;
+    filter:
+        drop-shadow(0 3px 8px rgba(0, 0, 0, 0.25))
+        drop-shadow(0 0 10px rgba(255, 255, 255, 0.35));
+
+    animation: breathe 2.4s ease-in-out infinite;
 }
 
-@keyframes pulse {
-
-    0% {
-
-        transform: scale(1);
-    }
-
-    50% {
-
-        transform: scale(1.3);
-    }
-
-    100% {
-
-        transform: scale(1);
-    }
+#pointer svg {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
-#tooltip{
+@keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.06); }
+}
 
-    position:absolute;
+/* ===========================
+   Tooltip
+=========================== */
 
-    padding:12px;
+#tooltip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    max-width: 300px;
 
-    max-width:300px;
+    padding: 12px 14px 12px 16px;
 
-    background:rgba(0,0,0,0.8);
+    background: rgba(23, 23, 27, 0.82);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
 
-    color:white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 2px solid var(--grad-pink);
+    border-radius: 4px 10px 10px 4px;
 
-    border-radius:8px;
+    color: #f5f5f7;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.45;
 
-    font-size:16px;
-
-    left:0;
-
-    top:0;
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(0, 0, 0, 0.15);
 
     transition:
-    left 0.3s ease,
-    top 0.3s ease;
+        left 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        top 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 
     pointer-events: none;
-
+    z-index: 9999;
 }
 
+/* ===========================
+   Floating Control Bar — white glass
+=========================== */
 
+#controlBar {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
 
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 8px 8px 8px 16px;
+
+    border-radius: 999px;
+
+    background: var(--glass);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+
+    border: 1px solid var(--hairline);
+
+    box-shadow:
+        0 16px 40px rgba(20, 20, 30, 0.14),
+        0 1px 0 rgba(255, 255, 255, 0.8) inset,
+        0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+
+    z-index: 1000;
+}
+
+#controlBar,
+#controlBar * {
+    pointer-events: auto;
+}
+
+/* -- drag handle: dot grid -- */
+
+#dragHandle {
+    display: grid;
+    grid-template-columns: repeat(2, 3px);
+    grid-auto-rows: 3px;
+    gap: 3px;
+    padding: 0 6px;
+    cursor: grab;
+}
+
+#dragHandle .dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--ink-faint);
+}
+
+#dragHandle:active {
+    cursor: grabbing;
+}
+
+/* -- status indicator -- */
+
+#statusDot {
+    position: relative;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--grad-violet), var(--grad-pink));
+    box-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
+    flex-shrink: 0;
+    margin: 0 2px;
+    animation: statusPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.4; }
+}
+
+/* -- input -- */
+
+#goalInput {
+    width: 420px;
+
+    border: 1px solid transparent;
+    outline: none;
+
+    padding: 11px 16px;
+
+    border-radius: 999px;
+
+    background: rgba(20, 20, 25, 0.045);
+
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    font-weight: 400;
+    letter-spacing: 0.1px;
+
+    transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+#goalInput::placeholder {
+    color: var(--ink-muted);
+}
+
+#goalInput:hover {
+    background: rgba(20, 20, 25, 0.07);
+}
+
+#goalInput:focus {
+    background: rgba(20, 20, 25, 0.08);
+    border-color: rgba(168, 85, 247, 0.35);
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.12);
+}
+
+/* -- action button: compound "label + arrow badge" pill -- */
+
+#actionButton {
+    display: flex;
+    align-items: center;
+
+    border: none;
+
+    padding: 4px 4px 4px 20px;
+
+    border-radius: 999px;
+
+    background: var(--charcoal);
+
+    color: #ffffff;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 6px 16px rgba(23, 23, 27, 0.28),
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+
+    transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+#actionButton * {
+    pointer-events: none;
+}
+
+.btn-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-left: 14px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--grad-blue), var(--grad-violet) 45%, var(--grad-pink) 80%, var(--grad-orange));
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#actionButton:hover {
+    background: var(--charcoal-soft);
+    box-shadow:
+        0 8px 22px rgba(23, 23, 27, 0.34),
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+    transform: translateY(-1px);
+}
+
+#actionButton:hover .btn-arrow {
+    transform: translateX(2px);
+}
+
+#actionButton:active {
+    transform: translateY(0);
+}

@@ -38,7 +38,13 @@ contextBridge.exposeInMainWorld(
             (_, data) => callback(data));
         },
 
-
+        setOverlayMouseEvents: (ignore) => {
+            return ipcRenderer.invoke("set-overlay-mouse-events",ignore);
+        },
+        // overlay to the main process the GOAL String
+        startGuidance: (goal) => {
+            return ipcRenderer.invoke("overlay:start-guidance", goal);
+        },
     }
 );
 

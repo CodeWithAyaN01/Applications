@@ -1,24 +1,18 @@
-const captureButton = document.getElementById("captureBtn");
+import { analyzeScreen } from "../renderer/ai.js";
+import { extractText } from "../renderer/ocr.js";
+import { findWord, findPhrase, findAllWords } from "../renderer/ocrSearch.js";
+import { captureCurrentScreen } from "../services/captureService.js";
 
-const preview = document.getElementById("preview");
 
+export async function startGuidance(goal) {
 
-captureButton.addEventListener("click",async () => {
+    console.log(goal);
+    const capture = await captureCurrentScreen();
 
-    const screenData = await window.electronAPI.captureScreen(); // this function goes to the preload.js -> the main window
-    const image = screenData.image;
-    const words = screenData.words;
-        
-    preview.src = `data:image/jpeg;base64,${image}`;
-    
-
-    // Prompt for the image render
-
-    const question = "I want to shut down the system?"
-    const result = await window.electronAPI.analyzeImage(
-        image,
-        `
-        You are HoverAI, a precise on-screen guidance assistant. You receive a screenshot and a user request, and must locate the exact UI element needed.
+    console.log("Calling Gemini...");
+    const prompt = 
+    `
+    You are HoverAI, a precise on-screen guidance assistant. You receive a screenshot and a user request, and must locate the exact UI element needed.
 
         Return ONLY this JSON (no markdown, no code fences, no extra text):
 
@@ -31,7 +25,7 @@ captureButton.addEventListener("click",async () => {
             "nextStep": if applicable else null
         }
 
-        REQUEST: "${question}"
+        REQUEST: "${goal}"
 
         COORDINATES:
         - Percentages, origin (0,0) top-left, (100,100) bottom-right.
@@ -72,25 +66,15 @@ captureButton.addEventListener("click",async () => {
         - confidence indicates OCR certainty.
 
         OCR Data:
-        `
-      ,
-        words
-    )
-    console.log("OCR Words Got: ", words.length);
-    const data = JSON.parse(result)
-    console.log(data)
+    `
 
-    const {width, height} = await window.electronAPI.getScreenSize();
-
-    // TAKING OUT COORDINATES   
-    const x = width * data.targetPercentX / 100
-    const y = height * data.targetPercentY / 100
-
-    // MOVE POINTERS
-    await window.electronAPI.movePointer(x,y)
-    await window.electronAPI.showExplanation(x,y,data.explanation);
-
-    console.log(x,y)
-    }
-
+    const result = await analyzeScreen(
+    capture.image,
+    prompt,
+    capture.words
 );
+
+console.log("Gemini Result:", result);
+
+return result;
+}

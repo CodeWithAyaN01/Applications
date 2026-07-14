@@ -10,7 +10,9 @@ const ai = new GoogleGenAI({
 export async function analyzeScreen(imageBase64, prompt, words) {
 
     const ocrContext = words.map(word =>
-    `${word.text} (${word.x}, ${word.y}, ${word.width}, ${word.height})`).join("\n");
+        `Text="${word.text}", x=${word.x}, y=${word.y}, width=${word.width}, height=${word.height}`
+    )
+    .join("\n");
 
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
