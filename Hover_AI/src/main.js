@@ -237,29 +237,16 @@ ipcMain.handle("set-overlay-mouse-events", (_, ignore) => {
 
 ipcMain.handle("overlay:start-guidance", async (_, goal) => {
 
-    const result = await startGuidance(goal);
+    const guidance = await startGuidance(goal);
 
-    if (!result) {
+    if (!guidance) {
         return;
     }
 
-    const data = JSON.parse(result);
-
-    const { width, height } = screen.getPrimaryDisplay().bounds;
-
-    const x = Math.round(width * (data.targetPercentX / 100));
-    const y = Math.round(height * (data.targetPercentY / 100));
-
-    overlayWindow.webContents.send("move-pointer", {
-        x,
-        y
-    });
-
-    overlayWindow.webContents.send("show-explanation", {
-        x,
-        y,
-        text: data.explanation
-    });
+    overlayWindow.webContents.send(
+        "guidance-update",
+        guidance
+    );
 
 });
 app.whenReady().then(async () => {

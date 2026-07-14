@@ -45,6 +45,14 @@ contextBridge.exposeInMainWorld(
         startGuidance: (goal) => {
             return ipcRenderer.invoke("overlay:start-guidance", goal);
         },
+        
+        onGuidanceUpdate: (callback) => {
+            ipcRenderer.on(
+                "guidance-update",
+                (_, data) => callback(data)
+            );
+
+        },
     }
 );
 

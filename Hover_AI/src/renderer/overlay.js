@@ -40,10 +40,21 @@ function movePointer(x, y) {
 }
 
 // listning the movements from the main.js insted of the this function
-window.electronAPI.onMovePointer((data) => {
-    console.log(data)
-    movePointer(data.x, data.y)
-})
+
+window.electronAPI.onGuidanceUpdate((data) => {
+
+    movePointer(
+        data.x,
+        data.y
+    );
+
+    updateTooltip(
+        data.x,
+        data.y,
+        data.explanation
+    );
+
+});
 
 function updateTooltip(x,y,text){
     tooltip.innerText = text;
@@ -51,13 +62,7 @@ function updateTooltip(x,y,text){
     tooltip.style.top = `${y - 20}px`;
 }
 
-window.electronAPI.onShowExplanation((data) => {
-    updateTooltip(
-        data.x,
-        data.y,
-        data.text
-    );
-});
+
 
 // ===========================
 // Draggable Control Bar

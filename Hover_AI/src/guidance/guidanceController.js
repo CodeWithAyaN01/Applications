@@ -2,8 +2,9 @@ import { analyzeScreen } from "../renderer/ai.js";
 import { extractText } from "../renderer/ocr.js";
 import { findWord, findPhrase, findAllWords } from "../renderer/ocrSearch.js";
 import { captureCurrentScreen } from "../services/captureService.js";
+import { screen } from "electron";
 
-
+let guidanceSession = null;
 export async function startGuidance(goal) {
 
     console.log(goal);
@@ -74,7 +75,25 @@ export async function startGuidance(goal) {
     capture.words
 );
 
-console.log("Gemini Result:", result);
+const data = JSON.parse(result);
 
-return result;
+const { width, height } =
+    screen.getPrimaryDisplay().bounds;
+
+data.x = Math.round(
+    width * (data.targetPercentX / 100)
+);
+
+data.y = Math.round(
+    height * (data.targetPercentY / 100)
+);
+
+console.log(data) // testing
+
+return data;
+
 }
+
+
+
+
