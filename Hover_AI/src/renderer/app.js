@@ -1,11 +1,20 @@
 const captureButton = document.getElementById("captureBtn");
 
 const preview = document.getElementById("preview");
+import { hideOverlay, showOverlay } from "../services/overlayService.js";
 
+function delay(ms) {
 
+    return new Promise(resolve =>
+        setTimeout(resolve, ms)
+    );
+
+}
 captureButton.addEventListener("click",async () => {
-
+    hideOverlay()
+    await delay(30)
     const screenData = await window.electronAPI.captureScreen(); // this function goes to the preload.js -> the main window
+    showOverlay()
     const image = screenData.image;
     const words = screenData.words;
         

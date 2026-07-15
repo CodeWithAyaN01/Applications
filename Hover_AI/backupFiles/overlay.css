@@ -105,54 +105,35 @@ body {
 }
 
 /* ===========================
-   Floating Control Bar — white glass, minimal
+   Floating Control Bar — white glass
 =========================== */
 
 #controlBar {
     position: fixed;
-    top: 28px;
+    top: 24px;
     left: 50%;
     transform: translateX(-50%);
 
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 10px;
 
-    padding: 5px 5px 5px 14px;
+    padding: 8px 8px 8px 16px;
 
     border-radius: 999px;
 
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.58));
-    backdrop-filter: blur(30px) saturate(200%);
-    -webkit-backdrop-filter: blur(30px) saturate(200%);
+    background: var(--glass);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
 
-    border: 1px solid rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--hairline);
 
     box-shadow:
-        0 24px 60px -16px rgba(20, 20, 30, 0.22),
-        0 8px 20px -10px rgba(20, 20, 30, 0.12),
-        0 1px 0 rgba(255, 255, 255, 0.95) inset,
-        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+        0 16px 40px rgba(20, 20, 30, 0.14),
+        0 1px 0 rgba(255, 255, 255, 0.8) inset,
+        0 0 0 1px rgba(255, 255, 255, 0.4) inset;
 
     z-index: 1000;
-    isolation: isolate;
-    transition: box-shadow 0.25s ease;
-}
-
-/* soft diffused color glow radiating evenly from behind the pill */
-#controlBar::before {
-    content: "";
-    position: absolute;
-    inset: -36px;
-    border-radius: 999px;
-    background:
-        radial-gradient(circle at 18% 50%, rgba(79, 124, 255, 0.32), transparent 62%),
-        radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.26), transparent 65%),
-        radial-gradient(circle at 82% 50%, rgba(236, 72, 153, 0.30), transparent 62%);
-    filter: blur(28px);
-    opacity: 0.37;
-    z-index: -1;
-    pointer-events: none;
 }
 
 #controlBar,
@@ -160,83 +141,60 @@ body {
     pointer-events: auto;
 }
 
-/* -- drag handle: minimal grip lines -- */
+/* -- drag handle: dot grid -- */
 
 #dragHandle {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(2, 3px);
+    grid-auto-rows: 3px;
     gap: 3px;
-    padding: 0 10px;
+    padding: 0 6px;
     cursor: grab;
 }
 
 #dragHandle .dot {
-    width: 13px;
-    height: 2px;
-    border-radius: 2px;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
     background: var(--ink-faint);
-    transition: background 0.15s ease, width 0.15s ease;
-}
-
-#dragHandle .dot:last-child {
-    width: 8px;
-}
-
-#dragHandle:hover .dot {
-    background: var(--ink-muted);
-}
-
-#dragHandle:hover .dot:last-child {
-    width: 13px;
 }
 
 #dragHandle:active {
     cursor: grabbing;
 }
 
-/* -- divider between grip and content -- */
-
-.bar-divider {
-    width: 1px;
-    height: 20px;
-    background: var(--hairline-dark);
-    margin: 0 2px;
-    flex-shrink: 0;
-}
-
 /* -- status indicator -- */
 
 #statusDot {
     position: relative;
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--grad-violet), var(--grad-pink));
-    box-shadow: 0 0 6px rgba(236, 72, 153, 0.45);
+    box-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
     flex-shrink: 0;
-    margin: 0 8px 0 12px;
+    margin: 0 2px;
     animation: statusPulse 2.4s ease-in-out infinite;
 }
 
 @keyframes statusPulse {
     0%, 100% { opacity: 1; }
-    50%      { opacity: 0.35; }
+    50%      { opacity: 0.4; }
 }
 
-/* -- input: borderless, sits directly on the glass -- */
+/* -- input -- */
 
 #goalInput {
-    width: 380px;
+    width: 420px;
 
-    border: none;
+    border: 1px solid transparent;
     outline: none;
 
-    padding: 12px 6px;
+    padding: 11px 16px;
 
     border-radius: 999px;
 
-    background: transparent;
+    background: rgba(20, 20, 25, 0.045);
 
     color: var(--ink);
     font-family: var(--font-body);
@@ -244,52 +202,24 @@ body {
     font-weight: 400;
     letter-spacing: 0.1px;
 
-    transition: background 0.18s ease;
+    transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 #goalInput::placeholder {
     color: var(--ink-muted);
 }
 
+#goalInput:hover {
+    background: rgba(20, 20, 25, 0.07);
+}
+
 #goalInput:focus {
-    background: rgba(20, 20, 25, 0.045);
+    background: rgba(20, 20, 25, 0.08);
+    border-color: rgba(168, 85, 247, 0.35);
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.12);
 }
 
-#goalInput:disabled {
-    color: var(--ink-muted);
-}
-
-/* -- inline error, floats below the pill -- */
-
-#goalError {
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin: 8px 0 0;
-
-    padding: 5px 12px;
-    border-radius: 8px;
-
-    background: rgba(23, 23, 27, 0.88);
-    backdrop-filter: blur(10px);
-
-    color: #ffd7de;
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 500;
-    white-space: nowrap;
-
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.18s ease;
-}
-
-#goalError:not(:empty) {
-    opacity: 1;
-}
-
-/* -- action: label chip + glowing gradient orb button -- */
+/* -- action button: compound "label + arrow badge" pill -- */
 
 #actionButton {
     display: flex;
@@ -297,31 +227,25 @@ body {
 
     border: none;
 
-    padding: 3px;
-    padding-left: 16px;
+    padding: 4px 4px 4px 20px;
 
     border-radius: 999px;
 
-    background: transparent;
+    background: var(--charcoal);
 
-    color: var(--charcoal);
+    color: #ffffff;
     font-family: var(--font-display);
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.2px;
 
     cursor: pointer;
 
-    transition: background 0.2s ease;
-}
+    box-shadow:
+        0 6px 16px rgba(23, 23, 27, 0.28),
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset;
 
-#actionButton:hover {
-    background: rgba(23, 23, 27, 0.05);
-}
-
-#actionButton:disabled {
-    cursor: default;
-    color: var(--ink-muted);
+    transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
 }
 
 #actionButton * {
@@ -332,29 +256,26 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
-    margin-left: 12px;
+    width: 32px;
+    height: 32px;
+    margin-left: 14px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--grad-blue), var(--grad-violet) 45%, var(--grad-pink) 80%, var(--grad-orange));
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#actionButton:hover {
+    background: var(--charcoal-soft);
     box-shadow:
-        0 6px 18px rgba(168, 85, 247, 0.35),
-        0 0 0 1px rgba(255, 255, 255, 0.4) inset;
-    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease;
+        0 8px 22px rgba(23, 23, 27, 0.34),
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+    transform: translateY(-1px);
 }
 
 #actionButton:hover .btn-arrow {
-    transform: scale(1.06);
-    box-shadow:
-        0 8px 22px rgba(168, 85, 247, 0.45),
-        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    transform: translateX(2px);
 }
 
-#actionButton:active .btn-arrow {
-    transform: scale(0.94);
-}
-
-#actionButton:disabled .btn-arrow {
-    background: linear-gradient(135deg, #c9cdd6, #b7bcc7);
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+#actionButton:active {
+    transform: translateY(0);
 }

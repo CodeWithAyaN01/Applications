@@ -5,6 +5,16 @@ const goalInput = document.getElementById("goalInput");
 const actionButton = document.getElementById("actionButton");
 const goalError = document.getElementById("goalError");
 
+let guidanceRunning = false;
+
+const OverlayState = {
+    IDLE: "idle",
+    ANALYZING: "analyzing",
+    GUIDING: "guiding",
+    COMPLETED: "completed",
+    ERROR: "error"
+};
+let currentState = OverlayState.IDLE;
 
 controlBar.addEventListener("mouseenter", () => {
 
@@ -62,7 +72,48 @@ function updateTooltip(x,y,text){
     tooltip.style.top = `${y - 20}px`;
 }
 
+function setOverlayState(state) {
 
+    currentState = state;
+
+    const buttonLabel =
+        actionButton.querySelector(".btn-label");
+
+    switch (state) {
+
+        case OverlayState.IDLE:
+            goalInput.disabled = false;
+            actionButton.disabled = false;
+            buttonLabel.textContent = "Start";
+            goalError.textContent = "";
+            break;
+
+        case OverlayState.ANALYZING:
+            goalInput.disabled = true;
+            actionButton.disabled = true;
+            buttonLabel.textContent = "Analyzing...";
+
+            break;
+
+        case OverlayState.GUIDING:
+            goalInput.disabled = true;
+            actionButton.disabled = false;
+            buttonLabel.textContent = "Next Step";
+            break;
+
+        case OverlayState.COMPLETED:
+            goalInput.disabled = false;
+            actionButton.disabled = false;
+            buttonLabel.textContent = "New Goal";
+            break;
+
+        case OverlayState.ERROR:
+            goalInput.disabled = false;
+            actionButton.disabled = false;
+            buttonLabel.textContent = "Retry";
+            break;
+    }
+}
 
 // ===========================
 // Draggable Control Bar
@@ -112,16 +163,59 @@ document.addEventListener("mouseup", () => {
 //  click event of the goal imput
 actionButton.addEventListener("click", handleStart);
 
-function handleStart() {
+
+async function handleStart() {
 
     const goal = goalInput.value.trim();
 
-    if (!goal) {
+    if (!goal && currentState === OverlayState.IDLE) {
+
         goalError.textContent = "Please enter a goal.";
+
         goalInput.focus();
+
         return;
     }
+
     goalError.textContent = "";
-    
-    window.electronAPI.startGuidance(goal);
+
+    try {
+
+        switch (currentState) {
+
+            case OverlayState.IDLE:
+                setOverlayState(OverlayState.ANALYZING);
+                await window.electronAPI.startGuidance(goal);
+                setOverlayState(OverlayState.GUIDING);
+                break;
+
+            case OverlayState.GUIDING:
+                setOverlayState(OverlayState.ANALYZING);
+                await window.electronAPI.nextGuidance();
+                setOverlayState(OverlayState.GUIDING);
+                break;
+
+            case OverlayState.COMPLETED:
+                goalInput.value = "";
+                setOverlayState(OverlayState.IDLE);
+                break;
+
+            case OverlayState.ERROR:
+                setOverlayState(OverlayState.ANALYZING);
+                await window.electronAPI.nextGuidance();
+                setOverlayState(OverlayState.GUIDING);
+                break;
+        }
+    }catch(error) {
+        console.log(error)
+        goalError.textContent = error.message;
+        setOverlayState(OverlayState.ERROR)
+    }
 }
+
+goalInput.addEventListener("input", () => {
+
+    if (currentState !== OverlayState.IDLE) {
+        setOverlayState(OverlayState.IDLE);
+    }
+});

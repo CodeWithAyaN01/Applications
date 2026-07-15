@@ -53,6 +53,9 @@ contextBridge.exposeInMainWorld(
             );
 
         },
+        nextGuidance: () => {
+            return ipcRenderer.invoke("overlay:next-guidance");
+        },
     }
 );
 

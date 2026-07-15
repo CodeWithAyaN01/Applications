@@ -4,10 +4,10 @@ import path from "path"
 import { fileURLToPath } from "url"
 import "dotenv/config"
 import { extractText, initializeOCR } from "./renderer/ocr.js";
-import { startGuidance } from "./guidance/guidanceController.js";
 import { captureCurrentScreen } from "./services/captureService.js"
 import { analyzeScreen } from "./renderer/ai.js"
-// import { findWord, findPhrase, findAllWords } from "./renderer/ocrSearch.js";
+import { setOverlayWindow } from "./services/overlayService.js";
+import {startGuidance,nextGuidance} from "./guidance/guidanceController.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -113,75 +113,8 @@ function createOverlayWindow() {
 }
 // ALL IPC HANDLEARS
 ipcMain.handle("capture-screen", async () => {
-
-    // capture scrren section
-    // const primaryDisplay = screen.getPrimaryDisplay()
-    // const scaleFactor = primaryDisplay.scaleFactor;
-    // const { width, height } = primaryDisplay.size
-
-    // const sources = await desktopCapturer.getSources({
-    // types: ["screen"],
-    // thumbnailSize: {
-    //     width: Math.round(width * scaleFactor),
-    //     height: Math.round(height * scaleFactor)
-    // }
-    // });
-
-    // // Native image
-    // const screenshot = sources[0].thumbnail;
-
-    // // OCR buffer in PNG Native format
-    
-    // const enlarged = screenshot.resize({
-    //     width: screenshot.getSize().width * 2,
-    //     height: screenshot.getSize().height * 2
-    // });
-
-    // const ocrBuffer = enlarged.toPNG();
-
-    // // OCR calling 
-    
-    // const words = await extractText(ocrBuffer)
-
-    // // Print every detected word
-    // console.log("Detected Words:");
-    // console.log(words.map(word => word.text));
-
-    // // Maintain aspect ratio
-    // const targetHeight = 720;
-    // const aspect =
-    //     screenshot.getSize().width / screenshot.getSize().height;
-    
-    // const targetWidth =
-    //     Math.round(
-    //         targetHeight * aspect
-    //     );
-
-    // // Resize
-    // const resized =
-    //     screenshot.resize({
-
-    //         width: targetWidth,
-    //         height: targetHeight
-    //     });
-
-    // // JPEG Q90
-    // const buffer = resized.toJPEG(90);
-    // console.log(
-    //     "JPEG Size :",
-    //     (buffer.length / 1024).toFixed(2),
-    //     "KB"
-    // );
-    // const base64 = buffer.toString("base64");
-    
-    // return {
-    //     image: base64,
-    //     words
-    // };
-
     return await captureCurrentScreen();
 })
-
 
 // get the base64 image and the prompt and call analyzeScreen() and return gemini response
 ipcMain.handle("analyze-screen",
@@ -249,11 +182,26 @@ ipcMain.handle("overlay:start-guidance", async (_, goal) => {
     );
 
 });
+
+ipcMain.handle("overlay:next-guidance", async () => {
+
+    const guidance = await nextGuidance();
+
+    overlayWindow.webContents.send(
+        "guidance-update",
+        guidance
+    );
+
+});
+
 app.whenReady().then(async () => {
 
     createMainWindow();
 
     createOverlayWindow();
+
+    // Register the overlay window
+    setOverlayWindow(overlayWindow);
     
     // creats worker for the OCR to read and process multiple Images taking less process times
     await initializeOCR();

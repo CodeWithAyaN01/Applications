@@ -4,39 +4,22 @@ function normalize(text) {
         .replace(/[^a-z0-9]/g, "");
 }
 
-// A single OCR pass is often searched several times in a row (guidance
-// flow, retries, multiple phrases from one Gemini response). Caching the
-// normalized form directly on each word object means repeated searches
-// against the same words array only pay the normalize() cost once per word.
-function getNormalized(word) {
-    if (word._norm === undefined) {
-        word._norm = normalize(word.text);
-    }
-    return word._norm;
-}
-
 export function findWord(words, target) {
-
-    if (!target) return null;
 
     const search = normalize(target);
 
     return words.find(word =>
-        getNormalized(word) === search
+        normalize(word.text) === search
     ) ?? null;
 }
 
 export function findAllWords(words, target) {
 
-    if (!target) return [];
-
     const search = normalize(target);
-
-    if (!search) return [];
 
     return words.filter(word => {
 
-        const text = getNormalized(word);
+        const text = normalize(word.text);
 
         return (
             text === search ||
@@ -71,6 +54,7 @@ export function findPhrase(words, phrase) {
 
         for (const second of secondMatches) {
 
+            // NEW:
             // Handles merged OCR words like "RecycleBin",
             // "TaskManager", "VisualStudio", etc.
             if (first === second) {
