@@ -4,6 +4,8 @@ const controlBar = document.getElementById("controlBar");
 const goalInput = document.getElementById("goalInput");
 const actionButton = document.getElementById("actionButton");
 const goalError = document.getElementById("goalError");
+const muteButton = document.getElementById("muteButton");
+import SpeechService from "../services/speechService.js";
 
 let guidanceRunning = false;
 
@@ -64,6 +66,8 @@ window.electronAPI.onGuidanceUpdate((data) => {
         data.explanation
     );
 
+    SpeechService.speak(data.explanation)
+
 });
 
 function updateTooltip(x,y,text){
@@ -114,6 +118,15 @@ function setOverlayState(state) {
             break;
     }
 }
+
+// mute button 
+muteButton.addEventListener("click", () => {
+
+    const enabled = SpeechService.toggleMute();
+
+    muteButton.textContent = enabled ? "🔊" : "🔇";
+
+});
 
 // ===========================
 // Draggable Control Bar

@@ -109,9 +109,8 @@ export async function runGuidance() {
             - width and height define the OCR bounding box.
             - confidence indicates OCR certainty.
 
-            IMPORTANT INFO BELOW
+            IMPORTANT INFO BELOW (only if the OCR data is not present, before fallback check the OCR data one more time)
             OCR FALLBACK WITH GEMINI ITSELF:
-            - DONT GIVE (0, 0) COORDINATES IF NOT FOUND SOMETHING GIVE THE APPROX COORDINATES TO THE CLICKING AREA
             - OCR may miss some visible text or contain recognition errors.
             - If the requested text is not present in the OCR data but is clearly visible in the screenshot, use the screenshot to locate it.
             - Treat OCR as an additional source of evidence, not the only source of truth.

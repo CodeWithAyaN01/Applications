@@ -358,3 +358,31 @@ body {
     background: linear-gradient(135deg, #c9cdd6, #b7bcc7);
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4) inset;
 }
+
+#muteButton{
+
+    width:42px;
+
+    height:42px;
+
+    border:none;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    background:rgba(255,255,255,.08);
+
+    color:white;
+
+    font-size:18px;
+
+    transition:.25s;
+}
+
+#muteButton:hover{
+
+    background:rgba(255,255,255,.16);
+
+    transform:scale(1.05);
+}
