@@ -56,6 +56,23 @@ contextBridge.exposeInMainWorld(
         nextGuidance: () => {
             return ipcRenderer.invoke("overlay:next-guidance");
         },
+        closeApplication: () => {
+            return ipcRenderer.invoke("close-application");
+        },
+        // this is for welcome screen !
+        saveApiKey: (apiKey) => {
+            return ipcRenderer.invoke("save-api-key", apiKey);
+        },
+
+        testGemini: () => {
+            return ipcRenderer.invoke("test-gemini");
+        },
+        getAvailableModels: () => {
+            return ipcRenderer.invoke("get-available-models");
+        },
+        saveSelectedModel: (model) => {
+            return ipcRenderer.invoke("save-selected-model", model);
+        },
     }
 );
 

@@ -10,27 +10,41 @@
 <body>
 
     <!-- Floating Control Bar -->
-    <div id="controlBar">
+    <div id="controlBar" role="toolbar" aria-label="HoverAI controls">
 
-        <div id="dragHandle">
+        <div id="dragHandle" aria-hidden="true">
             <span class="dot"></span>
             <span class="dot"></span>
         </div>
 
         <div class="bar-divider"></div>
 
-        <div id="statusDot"></div>
+        <div id="statusDot" aria-hidden="true"></div>
 
-        <input
-            id="goalInput"
-            type="text"
-            placeholder="What would you like HoverAI to help you with?"
-        >
-        
-        <p id="goalError"></p>
-        <button id="muteButton" title="Mute / Unmute">
+        <div id="goalInputWrap">
+            <input
+                id="goalInput"
+                type="text"
+                placeholder="What would you like HoverAI to help you with?"
+                aria-label="Goal for HoverAI"
+            >
+        </div>
+
+        <p id="goalError" role="alert"></p>
+
+        <button id="muteButton" title="Mute / Unmute" aria-label="Mute or unmute voice guidance">
             🔊
         </button>
+
+
+        <button id="changeGoalButton" hidden>
+            Change Goal
+        </button>
+
+        <button id="closeButton" title="Close HoverAI" aria-label="Close HoverAI">
+            ×
+        </button>
+
         <button id="actionButton">
             <span class="btn-label">Start</span>
             <span class="btn-arrow">

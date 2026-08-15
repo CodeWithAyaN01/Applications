@@ -1,35 +1,146 @@
 <!DOCTYPE html>
-
-<html>
-
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+
+    <meta
+        http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self'; script-src 'self';"
+    >
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>HoverAI</title>
 
+    <link rel="stylesheet" href="./index.css">
 </head>
 
 <body>
 
-    <h1>HoverAI Control Panel</h1>
+    <main class="welcome-container">
 
-    <h1>Please minimize the window to Continue its just for testing purpose</h1>
+        <section class="welcome-card">
 
-    <button id="captureBtn">
+            <div class="logo">
+                H
+            </div>
 
-        Capture Screen
+            <h1>Welcome to HoverAI</h1>
 
-    </button>
+            <p class="subtitle">
+                Your AI-powered visual assistant for navigating
+                apps, websites, and software.
+            </p>
 
-    <br>
-    <br>
 
-    <img
-        id="preview"
-        width="700"
-    >
+            <!-- API KEY SETUP -->
 
-    <script src="app.js"></script>
+            <div id="apiSetup" class="setup-card">
+
+                <label for="apiKey">
+                    Gemini API Key
+                </label>
+
+                <div class="api-input-wrapper">
+
+                    <input
+                        id="apiKey"
+                        type="password"
+                        placeholder="Enter your Gemini API key"
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+
+                    <button
+                        id="toggleKey"
+                        type="button"
+                        title="Show API key"
+                    >
+                        Show
+                    </button>
+
+                </div>
+
+                <button
+                    id="connectBtn"
+                    class="connect-button"
+                    type="button"
+                >
+                    Connect Gemini
+                </button>
+
+                <p id="status" class="status"></p>
+
+                <p class="help-text">
+                    Don't have a Gemini API key?
+                    <a
+                        href="https://aistudio.google.com/apikey"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Get one from Google
+                    </a>
+                </p>
+
+            </div>
+
+
+            <!-- MODEL SELECTION -->
+
+            <div
+                id="modelSetup"
+                class="setup-card model-card"
+                hidden
+            >
+
+                <div class="model-header">
+
+                    <h2>Choose your AI model</h2>
+
+                    <p>
+                        Select the Gemini model you want HoverAI to use.
+                    </p>
+
+                </div>
+
+                <select
+                    id="modelSelect"
+                    class="model-select"
+                >
+                    <option value="">
+                        Loading available models...
+                    </option>
+                </select>
+
+                <button
+                    id="continueBtn"
+                    class="connect-button"
+                    type="button"
+                    disabled
+                >
+                    Continue
+                </button>
+
+                <p
+                    id="modelStatus"
+                    class="status"
+                ></p>
+
+            </div>
+
+
+            <p class="footer">
+                HoverAI · Visual AI Guidance
+            </p>
+
+        </section>
+
+    </main>
+
+    <script src="./index.js"></script>
 
 </body>
-
 </html>

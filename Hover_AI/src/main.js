@@ -8,6 +8,8 @@ import { captureCurrentScreen } from "./services/captureService.js"
 import { analyzeScreen } from "./renderer/ai.js"
 import { setOverlayWindow } from "./services/overlayService.js";
 import {startGuidance,nextGuidance} from "./guidance/guidanceController.js";
+import {saveApiKey,saveSelectedModel} from "./services/configService.js";
+import {testGemini,getAvailableModels} from "./renderer/ai.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -52,7 +54,7 @@ function createMainWindow() {
         }
     });
 
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 }
 
 function createOverlayWindow() {
@@ -112,6 +114,13 @@ function createOverlayWindow() {
     // overlayWindow.webContents.openDevTools(); //This is to see the coordinates
 }
 // ALL IPC HANDLEARS
+
+ipcMain.handle("close-application", () => {
+
+    app.quit();
+
+});
+
 ipcMain.handle("capture-screen", async () => {
     return await captureCurrentScreen();
 })
@@ -192,6 +201,24 @@ ipcMain.handle("overlay:next-guidance", async () => {
         guidance
     );
 
+});
+
+ipcMain.handle("save-api-key", async (_, apiKey) => {
+    await saveApiKey(apiKey);
+    return true;
+});
+
+ipcMain.handle("test-gemini", async () => {
+    return await testGemini();
+});
+
+ipcMain.handle("get-available-models", async () => {
+    return await getAvailableModels();
+});
+
+ipcMain.handle("save-selected-model", (_, model) => {
+    saveSelectedModel(model);
+    return true;
 });
 
 app.whenReady().then(async () => {
