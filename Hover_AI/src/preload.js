@@ -73,6 +73,9 @@ contextBridge.exposeInMainWorld(
         saveSelectedModel: (model) => {
             return ipcRenderer.invoke("save-selected-model", model);
         },
+        openApiKeyPage: () => {
+            return ipcRenderer.invoke("open-api-key-page");
+        },
     }
 );
 

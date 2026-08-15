@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, screen } from "electron"
+import { app, BrowserWindow, ipcMain, screen, shell } from "electron"
 import { desktopCapturer } from "electron"
 import path from "path"
 import { fileURLToPath } from "url"
@@ -218,6 +218,15 @@ ipcMain.handle("get-available-models", async () => {
 
 ipcMain.handle("save-selected-model", (_, model) => {
     saveSelectedModel(model);
+    return true;
+});
+
+ipcMain.handle("open-api-key-page", async () => {
+    const apiKeyPage =
+        "https://" + "aistudio.google.com/apikey";
+
+    await shell.openExternal(apiKeyPage);
+
     return true;
 });
 

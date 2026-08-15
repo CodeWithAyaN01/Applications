@@ -2,7 +2,7 @@ const apiKeyInput = document.getElementById("apiKey");
 const toggleKeyButton = document.getElementById("toggleKey");
 const connectButton = document.getElementById("connectBtn");
 const statusElement = document.getElementById("status");
-
+const getApiKeyButton = document.getElementById("getApiKey");
 const apiSetup = document.getElementById("apiSetup");
 const modelSetup = document.getElementById("modelSetup");
 const modelSelect = document.getElementById("modelSelect");
@@ -148,4 +148,20 @@ continueButton.addEventListener("click", async () => {
         modelStatus.textContent =
             "Failed to save selected model.";
     }
+});
+
+getApiKeyButton.addEventListener("click", async (event) => {
+
+    event.preventDefault();
+
+    try {
+
+        await window.electronAPI.openApiKeyPage();
+
+    } catch (error) {
+
+        console.error("Failed to open API key page:", error);
+
+    }
+
 });
