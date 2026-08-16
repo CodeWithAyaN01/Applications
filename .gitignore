@@ -1,5 +1,8 @@
 node_modules/
 GeminiAPI/
+Automation/
+Projects Python/
+X_bott/
 .env
 .env.*
 
