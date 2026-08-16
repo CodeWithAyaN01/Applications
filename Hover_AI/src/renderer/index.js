@@ -165,3 +165,32 @@ getApiKeyButton.addEventListener("click", async (event) => {
     }
 
 });
+
+// Load saved API key when the Welcome Screen starts
+async function loadSavedApiKey() {
+
+    try {
+
+        const savedApiKey =
+            await window.electronAPI.getApiKey();
+
+        if (savedApiKey) {
+
+            apiKeyInput.value = savedApiKey;
+
+            statusElement.textContent =
+                "Saved API key loaded.";
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Failed to load saved API key:",
+            error
+        );
+
+    }
+}
+
+loadSavedApiKey();

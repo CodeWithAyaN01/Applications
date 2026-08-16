@@ -76,6 +76,9 @@ contextBridge.exposeInMainWorld(
         openApiKeyPage: () => {
             return ipcRenderer.invoke("open-api-key-page");
         },
+        getApiKey: () => {
+            return ipcRenderer.invoke("get-api-key");
+        },
     }
 );
 

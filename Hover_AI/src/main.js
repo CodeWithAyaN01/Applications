@@ -8,7 +8,7 @@ import { captureCurrentScreen } from "./services/captureService.js"
 import { analyzeScreen } from "./renderer/ai.js"
 import { setOverlayWindow } from "./services/overlayService.js";
 import {startGuidance,nextGuidance} from "./guidance/guidanceController.js";
-import {saveApiKey,saveSelectedModel} from "./services/configService.js";
+import {saveApiKey,saveSelectedModel, getApiKey} from "./services/configService.js";
 import {testGemini,getAvailableModels} from "./renderer/ai.js";
 
 
@@ -206,6 +206,10 @@ ipcMain.handle("overlay:next-guidance", async () => {
 ipcMain.handle("save-api-key", async (_, apiKey) => {
     await saveApiKey(apiKey);
     return true;
+});
+
+ipcMain.handle("get-api-key", async () => {
+    return await getApiKey();
 });
 
 ipcMain.handle("test-gemini", async () => {
